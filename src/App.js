@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import ButtonWithLoading from "./ButtonWithLoading";
 
 import "./App.css";
@@ -16,20 +16,11 @@ export const action = () =>
     });
 
 function App() {
-  const [children, setChildren] = useState("");
-
-  const onClick = () => {
-    setChildren("loading...");
-    action()
-      .then((data) => setChildren(data))
-      .catch((err) => setChildren(err));
-  };
 
   return (
     <div className="App">
       <ButtonWithLoading
-        onClick={onClick}
-        children={children}
+
         action={action}
       />
     </div>
