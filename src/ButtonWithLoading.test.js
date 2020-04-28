@@ -64,7 +64,6 @@ test("on click display 'loading'", () => {
 
 // - na kliknięciu wykona się promise przekazaną w propsie action
 test("on click action is called", () => {
-  const handleAction = jest.fn()
   const onClick = () => {
     action();
   };
