@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const ButtonWithLoading = ({ children, action }) => {
-  const [buttonText, setButtonText] = useState("");
+  const [actionPhase, setActionPhase] = useState("waitingForAction");
 
-  return (
-    <button
-      onClick={() => {
-        setButtonText("loading...");
-        return action()
-          .then((data) => setButtonText(data))
-          .catch((err) => setButtonText(err));
-      }}
-      disabled={buttonText == "loading..."}
-    >
-      {buttonText} {children ? children : "don't push my buttons"}
-    </button>
-  );
+  const useActionOnClick = useCallback(() => {
+    setActionPhase("clicked");
+    setActionPhase("loading");
+    action()
+      .then((data) => setActionPhase(data))
+      .catch((err) => setActionPhase(err));
+  }, []);
+
+  if (actionPhase === "waitingForAction") {
+    return (
+      <button onClick={useActionOnClick}>
+        {children ? children : "don't push my buttons"}
+      </button>
+    );
+  } else {
+    return (
+      <button onClick={useActionOnClick} disabled={actionPhase==="loading"}>
+        {actionPhase} {children ? children : "don't push my buttons"}
+      </button>
+    );
+  }
 };
 export default ButtonWithLoading;

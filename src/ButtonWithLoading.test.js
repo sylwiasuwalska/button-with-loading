@@ -7,8 +7,8 @@ import { action } from "./App"
 
 // - po wyrenderowaniu jest tagiem button
 test("renders button", () => {
-  const { getByText, getByRole } = render(
-    <ButtonWithLoading onClick children action />
+  const { getByRole } = render(
+    <ButtonWithLoading children action />
   );
   const button = getByRole("button");
   expect(button).toBeInTheDocument();
