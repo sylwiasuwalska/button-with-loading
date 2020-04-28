@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="App">
       <ButtonWithLoading
-
+        onClick={(data)=>{}}
         action={action}
       />
     </div>

@@ -65,7 +65,8 @@ test("after promise resolved button text is set to success", () => {
   );
   const button = getByRole("button");
   fireEvent.click(button);
-  expect(action).toHaveBeenCalled()
+  return expect(action()).resolves.toBe('success');
+
 });
 // - po wykonaniu się promisy z błędem, text buttona zmienia się na "error"
 

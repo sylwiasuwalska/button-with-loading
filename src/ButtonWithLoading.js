@@ -15,12 +15,18 @@ const ButtonWithLoading = ({ onClick, children, action }) => {
         onClick(err);
       });
   };
-
-  return (
-    <button onClick={useActionOnClick} disabled={actionPhase === "loading"}>
-      {actionPhase === "waitingForAction" ? "" : actionPhase}{" "}
-      {children ? children : "don't push my buttons"}
-    </button>
-  );
+ if (actionPhase === "waitingForAction") {
+   return (
+       <button onClick={useActionOnClick} >
+         {children ? children : "don't push my buttons"}
+       </button>
+   );
+ } else {
+   return (
+       <button onClick={useActionOnClick} disabled={actionPhase==="loading"} >
+         {actionPhase}
+       </button>
+   );
+ }
 };
 export default ButtonWithLoading;
