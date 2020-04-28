@@ -3,25 +3,26 @@ import ButtonWithLoading from "./ButtonWithLoading";
 
 import "./App.css";
 
+export const action = () =>
+    new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            clearTimeout(timer);
+            if (Math.random() > 0.5) {
+                resolve("success");
+            } else {
+                reject("error");
+            }
+        }, 2000);
+    });
+
 function App() {
   const [children, setChildren] = useState("");
 
-  const action = () =>
-    new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        clearTimeout(timer);
-        if (Math.random() > 0.5) {
-          resolve("success");
-        } else {
-          reject("error");
-        }
-      }, 2000);
-    })  .then(data => setChildren(data))
-        .catch(err => setChildren(err));
-
   const onClick = () => {
     setChildren("loading...");
-    action();
+    action()
+      .then((data) => setChildren(data))
+      .catch((err) => setChildren(err));
   };
 
   return (
@@ -36,3 +37,4 @@ function App() {
 }
 
 export default App;
+
