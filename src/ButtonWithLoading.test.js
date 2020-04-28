@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render } from "@testing-library/react";
+import {act, fireEvent, render} from "@testing-library/react";
 
 import ButtonWithLoading from "./ButtonWithLoading";
 import { action } from "./App"
@@ -35,7 +35,6 @@ test("if renders without children props set text on button", () => {
 
 //- kiedy button zostanie kliknięty wyświetli w buttonie text "loading..." oraz
 test("on click display 'loading'", () => {
-
   const { getByRole, rerender } = render(
     <ButtonWithLoading children action={action} />
   );
@@ -44,17 +43,19 @@ test("on click display 'loading'", () => {
   rerender(
     <ButtonWithLoading children action={action} />
   );
-  expect(button).toHaveTextContent("loading");
+  expect(button).toHaveTextContent("loading")
+  expect(button).not.toHaveTextContent("don't push my buttons");
 });
 
 // - na kliknięciu wykona się promise przekazaną w propsie action
-test("on click action is called", () => {
+test("on click action is called", async (done) => {
+
   const { getByRole} = render(
-      <ButtonWithLoading children action={action} />
+      <ButtonWithLoading onClick={(data)=>{}} children action={action} />
   );
   const button = getByRole("button");
   fireEvent.click(button);
-  expect(action).toHaveBeenCalled()
+
 });
 
 
