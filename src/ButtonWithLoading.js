@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 
-const ButtonWithLoading = ({ children, action }) => {
+const ButtonWithLoading = ({ onClick, children, action }) => {
   const [actionPhase, setActionPhase] = useState("waitingForAction");
 
   const useActionOnClick = () => {
-    setActionPhase("clicked");
     setActionPhase("loading");
     action()
-      .then((data) => setActionPhase(data))
-      .catch((err) => setActionPhase(err));
+      .then((data) => {
+        setActionPhase(data);
+        onClick(data);
+      })
+      .catch((err) => {
+        setActionPhase(err);
+        onClick(err);
+      });
   };
 
   return (
