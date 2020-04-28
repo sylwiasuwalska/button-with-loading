@@ -35,30 +35,22 @@ test("if renders without children props set text on button", () => {
 
 //- kiedy button zostanie kliknięty wyświetli w buttonie text "loading..." oraz
 test("on click display 'loading'", () => {
-  let childrenText = "";
-  const onClick = () => {
-    childrenText = "loading...";
-  };
 
   const { getByRole, rerender } = render(
-    <ButtonWithLoading onClick={onClick} children={childrenText} action />
+    <ButtonWithLoading children action={action} />
   );
   const button = getByRole("button");
   fireEvent.click(button);
   rerender(
-    <ButtonWithLoading onClick={onClick} children={childrenText} action />
+    <ButtonWithLoading children action={action} />
   );
-  expect(button).toHaveTextContent(childrenText);
+  expect(button).toHaveTextContent("loading");
 });
 
 // - na kliknięciu wykona się promise przekazaną w propsie action
 test("on click action is called", () => {
-  const onClick = () => {
-    action();
-  };
-
   const { getByRole} = render(
-      <ButtonWithLoading onClick={onClick} children action={action} />
+      <ButtonWithLoading children action={action} />
   );
   const button = getByRole("button");
   fireEvent.click(button);
@@ -67,6 +59,14 @@ test("on click action is called", () => {
 
 
 // - po wykonaniu się promisy poprawnie, text buttona zmienia się na "success"
+test("after promise resolved button text is set to success", () => {
+  const { getByRole} = render(
+      <ButtonWithLoading children action={action} />
+  );
+  const button = getByRole("button");
+  fireEvent.click(button);
+  expect(action).toHaveBeenCalled()
+});
 // - po wykonaniu się promisy z błędem, text buttona zmienia się na "error"
 
 
