@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import ButtonWithLoading from "./ButtonWithLoading";
+
+import "./App.css";
 
 function App() {
+  const [children, setChildren] = useState("");
+
+  const action = () =>
+    new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        if (Math.random() > 0.5) {
+          resolve("success");
+        } else {
+          reject("error");
+        }
+      }, 2000);
+    })  .then(data => setChildren(data))
+        .catch(err => setChildren(err));
+
+  const onClick = () => {
+    setChildren("loading...");
+    action();
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ButtonWithLoading
+        onClick={onClick}
+        children={children}
+        action={action}
+      />
     </div>
   );
 }
