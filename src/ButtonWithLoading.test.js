@@ -1,15 +1,19 @@
 import React from "react";
-import {act, fireEvent, render} from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 
 import ButtonWithLoading from "./ButtonWithLoading";
-import { action } from "./App"
+import { action } from "./App";
+
+jest.mock('./App', () => ({
+  action: jest.fn()
+}))
+
+
 
 
 // - po wyrenderowaniu jest tagiem button
 test("renders button", () => {
-  const { getByRole } = render(
-    <ButtonWithLoading children action />
-  );
+  const { getByRole } = render(<ButtonWithLoading children action />);
   const button = getByRole("button");
   expect(button).toBeInTheDocument();
 });
@@ -25,7 +29,7 @@ test("renders children as button tag", () => {
 });
 
 // - jeśli nic nie ma w propsie children text buttona to "don't push my buttons"
-test("if renders without children props set text on button", () => {
+test("if renders without children props, set specific text on button", () => {
   const { getByRole } = render(
     <ButtonWithLoading onClick children={""} action />
   );
@@ -34,49 +38,88 @@ test("if renders without children props set text on button", () => {
 });
 
 //- kiedy button zostanie kliknięty wyświetli w buttonie text "loading..." oraz
-test("on click display 'loading'", () => {
-  const { getByRole, rerender } = render(
-    <ButtonWithLoading children action={action} />
+test("on click display 'loading'",  () => {
+  action.mockResolvedValue("success")
+  const { getByRole} = render(
+    <ButtonWithLoading onClick={(data) => {}} children action={action} />
   );
   const button = getByRole("button");
-  fireEvent.click(button);
-  rerender(
-    <ButtonWithLoading children action={action} />
-  );
-  expect(button).toHaveTextContent("loading")
+   act(() => {
+    fireEvent.click(button);
+  });
+
+  expect(button).toHaveTextContent("loading");
   expect(button).not.toHaveTextContent("don't push my buttons");
 });
 
+
 // - na kliknięciu wykona się promise przekazaną w propsie action
-test("on click action is called", async (done) => {
 
-  const { getByRole} = render(
-      <ButtonWithLoading onClick={(data)=>{}} children action={action} />
+
+test("on click action is called", async () => {
+  action.mockResolvedValue("success")
+
+  const { getByRole } = render(
+    <ButtonWithLoading onClick={(data) => {}} children action={action} />
   );
+
   const button = getByRole("button");
-  fireEvent.click(button);
 
+  await act(async () => {
+    fireEvent.click(button);
+  });
+
+  expect(action).toHaveBeenCalledTimes(1);
+  action.mockClear();
 });
-
 
 // - po wykonaniu się promisy poprawnie, text buttona zmienia się na "success"
-test("after promise resolved button text is set to success", () => {
-  const { getByRole} = render(
-      <ButtonWithLoading children action={action} />
+test("after promise resolved button text is set to success", async () => {
+  action.mockResolvedValue("success")
+
+  const { getByRole } = render(
+      <ButtonWithLoading onClick={(data) => {}} children action={action} />
   );
+
   const button = getByRole("button");
-  fireEvent.click(button);
-  return expect(action()).resolves.toBe('success');
 
+  await act(async () => {
+    fireEvent.click(button);
+  });
+
+  expect(button).toHaveTextContent("success");
+  action.mockClear();
 });
-// - po wykonaniu się promisy z błędem, text buttona zmienia się na "error"
 
+
+// - po wykonaniu się promisy z błędem, text buttona zmienia się na "error"
+test("after promise rejected button text is set to error", async () => {
+  action.mockRejectedValue("error")
+
+  const { getByRole } = render(
+      <ButtonWithLoading onClick={(data) => {}} children action={action} />
+  );
+
+  const button = getByRole("button");
+
+  await act(async () => {
+    fireEvent.click(button);
+  });
+
+  expect(button).toHaveTextContent("error");
+  expect(button).not.toHaveTextContent("success")
+  action.mockClear();
+});
 
 // - ***kiedy button zostanie kliknięty nie będzie można w niego ponownie kliknąć w czasie ładowania
 test("button is disabled during loading", () => {
-  const { getByRole } = render(
-    <ButtonWithLoading onClick children="loading..." action />
+  action.mockResolvedValue("success")
+  const { getByRole} = render(
+      <ButtonWithLoading onClick={(data) => {}} children action={action} />
   );
   const button = getByRole("button");
+  act(async () => {
+   fireEvent.click(button);
+  });
   expect(button).toBeDisabled();
 });
