@@ -38,6 +38,7 @@ test("if renders without children props, set specific text on button", () => {
 //- kiedy button zostanie kliknięty wyświetli w buttonie text "loading..." oraz
 test("on click display 'loading'", () => {
   action.mockResolvedValue("success");
+
   const { getByRole } = render(
     <ButtonWithLoading onClick={(data) => {}} children action={action} />
   );
@@ -70,22 +71,25 @@ test("on click action is called", async () => {
 // - po wykonaniu się promisy poprawnie, text buttona zmienia się na "success"
 test("after promise resolved button text is set to success", async () => {
   action.mockResolvedValue("success");
+  const onClickData = jest.fn( data => data);
   const { getByRole } = render(
-    <ButtonWithLoading onClick={(data) => {}} children action={action} />
+    <ButtonWithLoading onClick={onClickData} children action={action} />
   );
   const button = getByRole("button");
   await act(async () => {
     fireEvent.click(button);
   });
   expect(button).toHaveTextContent("success");
+  expect(onClickData).toHaveReturnedWith("success")
   action.mockClear();
 });
 
 // - po wykonaniu się promisy z błędem, text buttona zmienia się na "error"
 test("after promise rejected button text is set to error", async () => {
   action.mockRejectedValue("error");
+  const onClickData = jest.fn( data => data);
   const { getByRole } = render(
-    <ButtonWithLoading onClick={(data) => {}} children action={action} />
+    <ButtonWithLoading onClick={onClickData} children action={action} />
   );
   const button = getByRole("button");
   await act(async () => {
@@ -93,6 +97,7 @@ test("after promise rejected button text is set to error", async () => {
   });
   expect(button).toHaveTextContent("error");
   expect(button).not.toHaveTextContent("success");
+  expect(onClickData).toHaveReturnedWith("error")
   action.mockClear();
 });
 
