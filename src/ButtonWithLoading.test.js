@@ -8,8 +8,6 @@ jest.mock("./App", () => ({
   action: jest.fn(),
 }));
 
-const mockAction = () => {}
-
 // - po wyrenderowaniu jest tagiem button
 test("renders button", () => {
   const { getByRole } = render(<ButtonWithLoading children action />);
